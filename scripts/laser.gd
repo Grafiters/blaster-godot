@@ -13,7 +13,7 @@ func _ready():
 	pass
 
 func _process(delta):
-	translate(velocity * dalta)
+	translate(velocity * delta)
 	pass
 
 func create_flare():
