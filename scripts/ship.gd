@@ -2,6 +2,8 @@
 extends Area2D
 
 var armor = 4 setget set_armor
+var is_double_shooting = false setget set_double_shooting
+
 const scn_laser = preload("res://scenes/laser_ship.tscn")
 const scn_explosion = preload("res://scenes/explosion.tscn")
 const scn_flash = preload("res://scenes/flash.tscn")
@@ -34,10 +36,18 @@ func shoot():
 		create_laser(pos_left)
 		create_laser(pos_right)
 		
+		if is_double_shooting:
+			var laser_left = create_laser(pos_left)
+			var laser_right = create_laser(pos_right)
+			laser_left.velocity.x = -25
+			laser_right.velocity.x = 25
+		
 		yield(utils.create_timer(0.25), "timeout")
 		pass
 
 func set_armor(new_value):
+	if new_value > 4: return
+	
 	if new_value < armor:
 		utils.main_node.add_child(scn_flash.instance())
 	
@@ -49,10 +59,19 @@ func set_armor(new_value):
 		queue_free()
 	pass
 
+func set_double_shooting(new_value):
+	is_double_shooting = new_value
+	
+	if is_double_shooting:
+		yield(utils.create_timer(5), "timeout")
+		is_double_shooting = false
+	pass
+
 func create_laser(pos):
 	var laser = scn_laser.instance()
 	laser.set_pos(pos)
 	utils.main_node.add_child(laser)
+	return laser
 	pass
 
 func create_explosion():
