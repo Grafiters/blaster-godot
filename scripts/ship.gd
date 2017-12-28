@@ -1,10 +1,13 @@
 #scripts : ship following mouse
 extends Area2D
 
+var armor = 4 setget set_armor
 const scn_laser = preload("res://scenes/laser_ship.tscn")
+const scn_explosion = preload("res://scenes/explosion.tscn")
 
 func _ready():
 	set_process(true)
+	add_to_group("ship")
 	
 	yield(utils.create_timer(0.5), "timeout")
 	shoot()
@@ -31,8 +34,21 @@ func shoot():
 		yield(utils.create_timer(0.25), "timeout")
 		pass
 
+func set_armor(new_value):
+	armor = new_value
+	if armor <= 0:
+		create_explosion()
+		queue_free()
+	pass
+
 func create_laser(pos):
 	var laser = scn_laser.instance()
 	laser.set_pos(pos)
 	utils.main_node.add_child(laser)
+	pass
+
+func create_explosion():
+	var explosion = scn_explosion.instance()
+	explosion.set_pos(get_pos())
+	utils.main_node.add_child(explosion)
 	pass
